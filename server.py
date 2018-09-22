@@ -9,7 +9,7 @@ import smartcar
 
 client = smartcar.AuthClient(
     client_id=os.environ["CLIENT_ID"],
-    client_secret=os.environ["CLIENT_SECRET"],
+    client_secret=Cos.environ["CLIENT_SECRET"],
     redirect_uri='http://localhost:8000/my_account/vehicle',
     scope=['read_vehicle_info', 'read_location', 'read_odometer']
 )
@@ -177,7 +177,7 @@ def get_service_shops():
     location = sm_vehicle.location()
 
     # querying yelp api below
-    yelp_url = 
+    yelp_url = "https://api.yelp.com/v3/businesses/search"
     header = {"Authorization": "Bearer {}".format(YELP_API_KEY)}
     # probably want to make categories something which varies depending on what service is required
     # will need to do something to set that up
@@ -185,13 +185,9 @@ def get_service_shops():
     payload = {"latitude": location["latitude"], "longitude": location["longitude"],
                "radius": 20000, "sort_by": "distance", "categories": categories}
 
-    response = requests.get()
-
-
-
-
-
-    # query the database for service shops near the location of the car
+    response = requests.get(yelp_url, headers=header, params=payload)
+    # check here if response goes through fine?
+    return response.text["businesses"]
 
 @app.errorhandler(404)
 def page_not_found(error):
