@@ -14,7 +14,8 @@ client = smartcar.AuthClient(
     scope=['read_vehicle_info', 'read_location', 'read_odometer']
 )
 
-
+# need to add yelp api key to secrets.sh
+YELP_API_KEY  = os.environ["YELP_API_KEY"]
 app = Flask(__name__)
 # need to define secret key here!
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
@@ -167,11 +168,14 @@ def get_service_shops():
     # get vehicle info (need access token associated with user)
     # so will need to do a check to make sure access token is valid (consider writing this into a function)
 
-    user_id = session
+    user_id = session.get("user_id")
+    user = User.query.get(user_id).first()
+    vehicle = Vehicle.query.filter_by(user_id=user_id).first()
+    sm_vehicle
+
+
 
     # query the database for service shops near the location of the car
-
-    pass
 
 @app.errorhandler(404)
 def page_not_found(error):
