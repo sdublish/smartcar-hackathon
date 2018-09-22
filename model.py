@@ -114,6 +114,7 @@ class YelpCategory(db.Model):
     __tablename__ = "yelpcategories"
 
     yelpcategory_id = db.Column(db.String(40), nullable=False, primary_key=True)
+    yelpcategory_search = db.Column(db.String(40), nullable=False)
  
 
 
