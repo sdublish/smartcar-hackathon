@@ -6,14 +6,19 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 
 
-CLIENT_ID = os.environ["CLIENT_ID"]
-CLIENT_SECRET = os.environ["CLIENT_SECRET"]
+client = smartcar.AuthClient(
+    client_id=os.environ["CLIENT_ID"],
+    client_secret=Cos.environ["CLIENT_SECRET"],
+    redirect_uri='http://localhost:8000/my_account/vehicle',
+    scope=['read_vehicle_info', 'read_location', 'read_odometer']
+)
+
 
 app = Flask(__name__)
 
 
 
-@app.route("/registration", methods=["POST"])
+@app.route("/registration", methods=["GET"])
 def render_registration_form():
     """render registration form"""
 
@@ -68,6 +73,10 @@ def user_login():
     else:
         if client.check_password(password):
             session["user_id"] = client.user_id
+
+            user = User.query.get(session["user_id"])
+
+
             return redirect("/home")
         else:
             flash("Password is Incorrect, Please try Again")
@@ -77,7 +86,7 @@ def user_login():
 
 @app.route('/home', methods=["GET"])
 def render_account_page():
-    
+    auth_url = client.get_auth_url(force=True)
     # query the database for the user profile section
     # make sure there is a connect the car button on this page
     # make sure there is a service shop button
@@ -88,6 +97,30 @@ def render_account_page():
     # completed
 
     # use absolute milage when calculating services needed
+
+    user = User.query.get(session["user_id"])
+
+    # some logic to update auth key 
+
+    auth_key = user.authorization_key
+
+    response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
+
+    vid = response['vehicles'][0]
+
+    vehicle = smartcar.Vehicle(vid, auth_key)
+
+    vehicle_info = vehicle.info()
+
+
+    vehicle_make = vehicle_info["make"]
+    vehicle_model = vehicle_info["model"]
+    vehicle_year = vehicle_info["year"]
+
+    car = Vehicle(vehicle_make, vehicle_model, vehicle_year)
+
+    db.session.add(car)
+    db.session.commit()
 
     return render_template("home.html")
 
@@ -102,19 +135,12 @@ def get_authorization_status():
 
     if data.get("error") is not None:
         return render_template("error_page.hteml")
+    
+    r_dict = json.dumps(data)
 
-    code = data.get("code")
+    code = request.args.get('code')
 
-    url = "https://auth.smartcar.com/oauth/token"
-    header = {'Content-Type': 'application/x-www-form-urlencoded'}
-    data = {'grant_type': 'authorization_code',
-            'code': code,
-            'redirect_uri': 'http://localhost:5000/my_account/vehicle'}
-
-    r = requests.post(url, headers=header, data=data,
-                      auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET))
-
-    r_dict = r.json()
+    access = client.exchange_code(code)
 
     user = User.query.get(session["user_id"])
 
