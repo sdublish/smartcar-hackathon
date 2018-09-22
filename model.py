@@ -20,7 +20,6 @@ class User(db.Model):
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    birthday = db.Column(db.DateTime, nullable=False)
     password = db.Column(db.String(110), nullable=False)
     create_date = db.Column(db.DateTime)
     authorization_key = db.Column(db.string(100))
@@ -36,9 +35,8 @@ class User(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<User user_id={} fname={} lname={} email={} birthday={}>".format(self.user_id, self.fname,
-                                                                                 self.lname, self.email,
-                                                                                 self.birthday)
+        return "<User user_id={} fname={} lname={} email={}>".format(self.user_id, self.fname,
+                                                                                 self.lname, self.email)
 class Vehicle(db.Model):
     """Vehicle model."""
 
@@ -61,7 +59,7 @@ class UserVehicle(db.Model):
 
     __tablename__ = "uservehicles"
 
-    uservehicle_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    uservehicle_id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     nickname = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
