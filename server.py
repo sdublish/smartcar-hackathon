@@ -170,8 +170,24 @@ def get_service_shops():
 
     user_id = session.get("user_id")
     user = User.query.get(user_id).first()
-    vehicle = Vehicle.query.filter_by(user_id=user_id).first()
-    sm_vehicle
+    vehicle = UserVehicle.query.filter_by(user_id=user_id).first()
+    # may need to check if key has expired or not here
+    sm_vehicle = smartcar.Vehicle(vehicle.uservehicle_id, user.authorization_key)
+
+    location = sm_vehicle.location()
+
+    # querying yelp api below
+    yelp_url = 
+    header = {"Authorization": "Bearer {}".format(YELP_API_KEY)}
+    # probably want to make categories something which varies depending on what service is required
+    # will need to do something to set that up
+    categories = "autorepair"
+    payload = {"latitude": location["latitude"], "longitude": location["longitude"],
+               "radius": 20000, "sort_by": "distance", "categories": categories}
+
+    response = requests.get()
+
+
 
 
 
