@@ -4,16 +4,18 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 from flask_sqlalchemy import SQLAlchemy
+import smartcar
 
 
 client = smartcar.AuthClient(
     client_id=os.environ["CLIENT_ID"],
-    client_secret=Cos.environ["CLIENT_SECRET"],
+    client_secret=os.environ["CLIENT_SECRET"],
     redirect_uri='http://localhost:8000/my_account/vehicle',
     scope=['read_vehicle_info', 'read_location', 'read_odometer']
 )
 
-
+# need to add yelp api key to secrets.sh
+YELP_API_KEY  = os.environ["YELP_API_KEY"]
 app = Flask(__name__)
 # need to define secret key here!
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
@@ -185,11 +187,26 @@ def get_service_shops():
     # get vehicle info (need access token associated with user)
     # so will need to do a check to make sure access token is valid (consider writing this into a function)
 
-    user_id = session
+    user_id = session.get("user_id")
+    user = User.query.get(user_id).first()
+    vehicle = UserVehicle.query.filter_by(user_id=user_id).first()
+    # may need to check if key has expired or not here
+    sm_vehicle = smartcar.Vehicle(vehicle.uservehicle_id, user.authorization_key)
 
-    # query the database for service shops near the location of the car
+    location = sm_vehicle.location()
 
-    pass
+    # querying yelp api below
+    yelp_url = "https://api.yelp.com/v3/businesses/search"
+    header = {"Authorization": "Bearer {}".format(YELP_API_KEY)}
+    # probably want to make categories something which varies depending on what service is required
+    # will need to do something to set that up
+    categories = "autorepair"
+    payload = {"latitude": location["latitude"], "longitude": location["longitude"],
+               "radius": 20000, "sort_by": "distance", "categories": categories}
+
+    response = requests.get(yelp_url, headers=header, params=payload)
+    # check here if response goes through fine?
+    return response.text["businesses"]
 
 @app.errorhandler(404)
 def page_not_found(error):
