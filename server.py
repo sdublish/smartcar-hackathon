@@ -10,6 +10,9 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 
 app = Flask(__name__)
+# need to define secret key here!
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
+
 
 
 
@@ -127,6 +130,17 @@ def get_authorization_status():
 
 @app.route('/service_shops', methods=["GET"])
 def get_service_shops():
+
+    # things i need to do:
+    # need to get vehicle location
+    # have access to user id
+    # so
+    # query user from database
+    # get vehicle associated with user
+    # get vehicle info (need access token associated with user)
+    # so will need to do a check to make sure access token is valid (consider writing this into a function)
+
+    user_id = session
 
     # query the database for service shops near the location of the car
 
