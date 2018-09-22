@@ -59,7 +59,7 @@ class UserVehicle(db.Model):
 
     __tablename__ = "uservehicles"
 
-    uservehicle_id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
+    uservehicle_id = db.Column(db.String(60), nullable=False, primary_key=True)
     nickname = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
@@ -96,7 +96,7 @@ class UserVehicleService(db.Model):
 
     uservehicleservice_id = db.Column(db.Integer, nullable=False, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey('services.service_id'))
-    uservehicle_id = db.Column(db.Integer, db.ForeignKey('uservehicles.uservehicle_id'))
+    uservehicle_id = db.Column(db.String(60), db.ForeignKey('uservehicles.uservehicle_id'))
     #odometer suggested here
     #odometer completed here
 
