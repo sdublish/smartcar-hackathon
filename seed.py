@@ -40,7 +40,7 @@ def load_vehicles(vehicles_filename):
         db.session.add(vehicle)
 
         if i % 10 == 0:
-            print i
+            print(i)
 
     db.session.commit()
 
@@ -79,7 +79,7 @@ def load_services(services_filename):
         db.session.add(student)
 
         if i % 10 == 0:
-            print i
+            print(i)
 
     db.session.commit()
 
