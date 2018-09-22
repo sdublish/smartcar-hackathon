@@ -120,7 +120,7 @@ class YelpCategory(db.Model):
 
 
 class YelpCategoryService(db.Model):
-    """Relational Table betweServices."""
+    """Relational Table between Yelp Category and Services."""
 
     __tablename__ = "yelpcategoryservices"
 
