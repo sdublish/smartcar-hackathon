@@ -129,21 +129,8 @@ if __name__ == "__main__":
     connect_to_db(app)
     db.create_all()
 
-    load_teachers("seed_data/teacher_seed.txt")
-    load_classrooms("seed_data/classroom_seed.txt")
-    load_avatars("seed_data/avatar_seed.txt")
-    load_students("seed_data/student_seed.txt")
-    load_instrument_types("seed_data/instrument_types_seed.txt")
-    load_classroom_instrument_types("seed_data/classroom_instrument_type_seed.txt")
-    load_instruments("seed_data/instrument_seed.txt")
-    load_composers("seed_data/composers_seed.txt")
-    load_music("seed_data/music_seed_actual.txt")
-    create_surveys()
-    set_val_student_id()
-    set_val_teacher_id()
-    set_val_class_id()
-    # set_val_survey_id()
-    set_val_classroom_instrument_type_id
+    load_vehicles("seed_data/vehicles.txt")
+
 
 
     

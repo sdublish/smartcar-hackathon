@@ -1,6 +1,6 @@
 """Models and database functions for smartcar_hackathon db."""
 
-from flask import Flask
+# from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
@@ -22,8 +22,8 @@ class User(db.Model):
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(110), nullable=False)
     create_date = db.Column(db.DateTime)
-    authorization_key = db.Column(db.string(100))
-    zipcode = db.Column(dbInteger)
+    authorization_key = db.Column(db.String(100))
+    zipcode = db.Column(db.Integer)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -67,10 +67,10 @@ class UserVehicle(db.Model):
 
 
     #Define relationship to user
-    user = db.relationship("User", backref=db.backref("users"), order_by=uservehicle_id))
+    user = db.relationship("User", backref=db.backref("users"), order_by=uservehicle_id)
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=uservehicle_id))    
+    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=uservehicle_id)    
 
 
 
@@ -85,7 +85,7 @@ class Service(db.Model):
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=service_id))    
+    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=service_id)    
 
 
 
@@ -101,10 +101,10 @@ class UserVehicleService(db.Model):
     #odometer completed here
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=uservehicleservice_id))
+    service = db.relationship("Service", backref=db.backref("services"), order_by=uservehicleservice_id)
 
     #Define relationship to uservehicle
-    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicles"), order_by=uservehicleservice_id))
+    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicles"), order_by=uservehicleservice_id)
 
 
 
@@ -125,13 +125,13 @@ class YelpCategoryService(db.Model):
 
     yelpcategoryservice_id = db.Column(db.Integer, nullable=False, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey('services.service_id'))
-    yelpcategory_id = db.Column(db.String(40), db.ForeignKey('vehicles.model_id'))
+    yelpcategory_id = db.Column(db.String(40), db.ForeignKey('yelpcategories.yelpcategory_id'))
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=yelpcategoryservice_id))
+    service = db.relationship("Service", backref=db.backref("services"), order_by=yelpcategoryservice_id)
 
     #Define relationship to yelpcategory
-    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategories"), order_by=yelpcategoryservice_id))
+    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategories"), order_by=yelpcategoryservice_id)
 
 
 
@@ -149,7 +149,7 @@ def init_app():
     print("Connected to DB.")
 
 
-def connect_to_db(app, db_uri='postgres:///foundation_project'):
+def connect_to_db(app, db_uri='postgres:///servicecar'):
     """Connect the database to our Flask app."""
 
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
