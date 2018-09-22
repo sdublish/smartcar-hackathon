@@ -64,24 +64,24 @@ def load_vehicles(vehicles_filename):
 #     db.session.commit()
 
 
-def load_services(services_filename):
-    """Load services."""
+# def load_services(services_filename):
+#     """Load services."""
 
-    print("Service")
+#     print("Service")
 
-    for i, row in enumerate(open(students_filename)):
-        row = row.rstrip()
+#     for i, row in enumerate(open(students_filename)):
+#         row = row.rstrip()
 
-        username, password, fname, lname, class_id = row.split("|")
+#         username, password, fname, lname, class_id = row.split("|")
 
-        student = Student(username=username, password=password, fname=fname, lname=lname, class_id=class_id, avatar_id=i+1)
+#         student = Student(username=username, password=password, fname=fname, lname=lname, class_id=class_id, avatar_id=i+1)
 
-        db.session.add(student)
+#         db.session.add(student)
 
-        if i % 10 == 0:
-            print i
+#         if i % 10 == 0:
+#             print i
 
-    db.session.commit()
+#     db.session.commit()
 
 
 

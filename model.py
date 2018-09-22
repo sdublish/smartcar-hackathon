@@ -67,10 +67,11 @@ class UserVehicle(db.Model):
 
 
     #Define relationship to user
-    user = db.relationship("User", backref=db.backref("users"), order_by=uservehicle_id)
+    user = db.relationship("User", backref=db.backref("uservehicles"), order_by=uservehicle_id)
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=uservehicle_id)    
+    model = db.relationship("Vehicle", backref=db.backref("uservehicles"), order_by=uservehicle_id)    
+
 
 
 
@@ -85,7 +86,7 @@ class Service(db.Model):
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=service_id)    
+    model = db.relationship("Vehicle", backref=db.backref("services"), order_by=service_id)    
 
 
 
@@ -101,10 +102,10 @@ class UserVehicleService(db.Model):
     #odometer completed here
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=uservehicleservice_id)
+    service = db.relationship("Service", backref=db.backref("uservehicleservices"), order_by=uservehicleservice_id)
 
     #Define relationship to uservehicle
-    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicles"), order_by=uservehicleservice_id)
+    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicleservices"), order_by=uservehicleservice_id)
 
 
 
@@ -128,10 +129,10 @@ class YelpCategoryService(db.Model):
     yelpcategory_id = db.Column(db.String(40), db.ForeignKey('yelpcategories.yelpcategory_id'))
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=yelpcategoryservice_id)
+    service = db.relationship("Service", backref=db.backref("yelpcategoryservice"), order_by=yelpcategoryservice_id)
 
     #Define relationship to yelpcategory
-    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategories"), order_by=yelpcategoryservice_id)
+    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategorieservices"), order_by=yelpcategoryservice_id)
 
 
 
