@@ -77,10 +77,26 @@ def user_login():
         if client.check_password(password):
             session["user_id"] = client.user_id
 
-            user = User.query.get(session["user_id"])
+            user_id = User.query.get(session["user_id"])
 
+            user = User.query.filter(User.user_id == user_id).first()
+
+            authorization_key = user.authorization_key
+
+            refresh_token = authorization_key["refresh_token"]
+
+            r = client.exchange_refresh_token(refresh_token)
+
+            r_dict = json.dumps(r)
+
+            new_auth_key = r_dict["access_token"]
+
+            user.authorization_key = new_auth_key
+
+            db.session.commit()
 
             return redirect("/home")
+
         else:
             flash("Password is Incorrect, Please try Again")
             return redirect("/login")
@@ -101,11 +117,11 @@ def render_account_page():
 
     # use absolute milage when calculating services needed
 
-    user = User.query.get(session["user_id"])
+    user_id = User.query.get(session["user_id"])
 
-    # some logic to update auth key 
+    user = User.query.filter(User.user_id == user_id).first()
 
-    auth_key = user.authorization_key
+    auth_key = user.authorization_key["access_token"]
 
     response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
 
@@ -115,18 +131,21 @@ def render_account_page():
 
     vehicle_info = vehicle.info()
 
-
     vehicle_make = vehicle_info["make"]
     vehicle_model = vehicle_info["model"]
     vehicle_year = vehicle_info["year"]
 
-    car = Vehicle(vehicle_make, vehicle_model, vehicle_year)
+    vehicle = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
+                                   Vehicle.vehicle_model_name == vehicle_model
+                                   and Vehicle.vehicle_year == vehicle_year).one()
+
+
+    
 
     db.session.add(car)
     db.session.commit()
 
     return render_template("home.html")
-
 
 
 @app.route('/my_account/vehicle', methods=["GET"])
@@ -136,18 +155,18 @@ def get_authorization_status():
 
     data = request.args
 
+    r_dict = json.dumps(data)
+
     if data.get("error") is not None:
         return render_template("error_page.hteml")
-    
-    r_dict = json.dumps(data)
 
     code = request.args.get('code')
 
-    access = client.exchange_code(code)
+    access = client.exchange_code(code["access_token"])
 
     user = User.query.get(session["user_id"])
 
-    user.authorization_key = r_dict["access_token"]
+    user.authorization_key = code
 
     db.session.commit()
 
