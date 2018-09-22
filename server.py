@@ -4,11 +4,12 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 from flask_sqlalchemy import SQLAlchemy
+import smartcar
 
 
 client = smartcar.AuthClient(
     client_id=os.environ["CLIENT_ID"],
-    client_secret=Cos.environ["CLIENT_SECRET"],
+    client_secret=os.environ["CLIENT_SECRET"],
     redirect_uri='http://localhost:8000/my_account/vehicle',
     scope=['read_vehicle_info', 'read_location', 'read_odometer']
 )
