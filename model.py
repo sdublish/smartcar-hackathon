@@ -81,9 +81,10 @@ class Service(db.Model):
 
     __tablename__ = "services"
 
-    service_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    service_id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     service_name = db.Column(db.String(100))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
+    suggested_mileage = db.Column(db.Integer)
 
     #Define relationship to model
     model = db.relationship("Vehicle", backref=db.backref("services"), order_by=service_id)    
