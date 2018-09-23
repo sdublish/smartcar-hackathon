@@ -6,7 +6,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 import smartcar
 import datetime
-from model import User, Vehicle, UserVehicle, connect_to_db
+from model import User, Vehicle, UserVehicle, connect_to_db, db
 
 
 client = smartcar.AuthClient(
