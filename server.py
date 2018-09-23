@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, session, flash
+from flask import Flask, render_template, request, session, flash, redirect
 import json
 import requests
 from requests.auth import HTTPBasicAuth
 import os
 from flask_sqlalchemy import SQLAlchemy
 import smartcar
+import datetime
 from model import User, Vehicle, UserVehicle, connect_to_db
 
 
@@ -22,8 +23,6 @@ app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
 
-
-
 @app.route("/registration", methods=["GET"])
 def render_registration_form():
     """render registration form"""
@@ -34,14 +33,14 @@ def render_registration_form():
 @app.route("/registration", methods=["POST"])
 def get_user_info():
     """get user info and add info to db"""
-    #f_name = request.form.get
-    #l_name = request.form.get
-    #email = request.form.get
+    # f_name = request.form.get
+    # l_name = request.form.get
+    # email = request.form.get
     # birthday = request.form.get
     # password = request.form.get
     create_date = datetime.datetime.utcnow()
-    authorization_key = access_token = r_dict["access_token"]
-    #zipcode = requst.form.get
+    # authorization_key =
+    # zipcode = requst.form.get
 
     user = User(f_name=f_name, l_name=l_name, email=email, 
                 password=password, create_date=create_date,
@@ -65,45 +64,87 @@ def render_login_form():
 def user_login():
     """ checks user login info against the info saved in db """
 
-    # email_address = request.form.get("user_email")
+    email_address = request.form.get("user_email")
     password = request.form.get("user_password")
 
     # check to see if this user exists in our db
-    # client = User.query.filter(User.email == email_address).first()
+
+    client = User.query.filter(User.email == email_address).first()
 
     # if user does not exist, have user register
     if client is None:
         flash("No User Found, Please Register")
         return redirect("/registration")
     # if user exists, then check the password
+
+    if client.check_password(password):
+        session["user_id"] = client.user_id
+
+        user_id = User.query.get(session["user_id"])
+
+        user = User.query.filter(User.user_id == user_id).first()
+
+        cars = user.uservehicles
+
+        if not cars:
+            return redirect("/add_car")
+
+        authorization_key = user.authorization_key
+
+        refresh_token = authorization_key["refresh_token"]
+
+        r = client.exchange_refresh_token(refresh_token)
+
+        r_dict = json.dumps(r)
+
+        new_auth_key = r_dict["access_token"]
+
+        user.authorization_key = new_auth_key
+
+        db.session.commit()
+
+        return redirect("/home")
+
     else:
-        if client.check_password(password):
-            session["user_id"] = client.user_id
+        flash("Password is Incorrect, Please try Again")
+        return redirect("/login")
 
-            user_id = User.query.get(session["user_id"])
 
-            user = User.query.filter(User.user_id == user_id).first()
+@app.route("/add_car", methods=["GET"])
+def add_new_car():
 
-            authorization_key = user.authorization_key
+    auth_url = client.get_auth_url(force=True)
 
-            refresh_token = authorization_key["refresh_token"]
+    user_id = User.query.get(session["user_id"])
 
-            r = client.exchange_refresh_token(refresh_token)
+    user = User.query.filter(User.user_id == user_id).first()
 
-            r_dict = json.dumps(r)
+    auth_key = user.authorization_key["access_token"]
 
-            new_auth_key = r_dict["access_token"]
+    response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
 
-            user.authorization_key = new_auth_key
+    vid = response['vehicles'][0]
 
-            db.session.commit()
+    vehicle = smartcar.Vehicle(vid, auth_key)
 
-            return redirect("/home")
+    vehicle_info = vehicle.info()
 
-        else:
-            flash("Password is Incorrect, Please try Again")
-            return redirect("/login")
+    print(type(vehicle_info))
 
+    vehicle_make = vehicle_info["make"]
+    vehicle_model = vehicle_info["model"]
+    vehicle_year = vehicle_info["year"]
+
+    car = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
+                                Vehicle.vehicle_model_name == vehicle_model
+                                and Vehicle.vehicle_year == vehicle_year).one()
+
+    user_car = UserVehicle(user_id, car.model_id)
+
+    db.session.add(user_car)
+    db.session.commit()
+
+    return("/home")
 
 
 @app.route('/home', methods=["GET"])
@@ -132,21 +173,27 @@ def render_account_page():
 
     vehicle = smartcar.Vehicle(vid, auth_key)
 
+    odometer = vehicle.odometer()
+
+    location = vehicle.location()
+
+
     vehicle_info = vehicle.info()
 
     vehicle_make = vehicle_info["make"]
     vehicle_model = vehicle_info["model"]
     vehicle_year = vehicle_info["year"]
 
-    vehicle = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
-                                   Vehicle.vehicle_model_name == vehicle_model
-                                   and Vehicle.vehicle_year == vehicle_year).one()
+    car = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
+                               Vehicle.vehicle_model_name == vehicle_model
+                               and Vehicle.vehicle_year == vehicle_year).one()
 
 
-    car = UserVehicle(user_id=session["user_id"], model_id=vehicle.model_id)
+    user_car = UserVehicle(user_id, car.model_id, odometer["distance"], location["latitude"],
+                            location["latitude"])
 
 
-    db.session.add(car)
+    db.session.add(user_car)
     db.session.commit()
 
     return render_template("home.html")
