@@ -10,55 +10,52 @@
 
     <title>Dashboard</title>
   </head>
+    
   <body>
 
     <!-- Nav -->
-      <div class="card-header"> 
-      <h5 class="card-title"> Smartshop </h5> 
-      <div align="right"> </div>
-      </div>
+      <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Smart Car</a>
+        <ul class="navbar-nav px-3">
+          <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+        </li>
+      </ul>
+    </nav>
 
     <!-- Dashboard -->
-        <!-- Username information -->
-
-        <!-- div class="container-fluid">
-          <div class="row"> -->
-
-            <div>
+      <!-- Username information -->
+       <h1 class="h2">Dashboard</h1>
+          <div class="container-fluid">
+            <div class="row">
+             <div class="col-sm8">
               <h3> Hi UserName </h3>
               <img> User's image here </img>
             </div>
-          </div>
+        
+      <!-- Vehicle information -->
+        <div class="col-md-9 ml-sm-auto col-lg-10 px-4" id="vehicle-info">
+            <h4 class="header"> Your Vehicle </h4>
+                <p class="vehicle.make" name="vehicle_make"> Make </p>
+                <p class="vehicle.model" name="vehicle_model"> Model </p>
+                <p class="vehicle.year" name="vehicle_year"> Year </p>
+               <img src="image.car"> Img </img>
+            </div>
+          </div class="row>">
 
-        <div class="?" id="vehicle-info">
-          <h3 class="header"> Vehicle Information </h3>
-            <p class="vehicle.make" name="vehicle.make"> Make </p>
-            <p class="vehicle.model" name="vehicle.model"> Model </p>
-            <p class="vehicle.year" name="year"> Year </p>
-            
-            <!-- Place holder for images -->
-            <img src="image.car"> Img </img>
-          </div>
-        </div>
+        <!-- Odometer -->  
+          <div class="row">
+            <div name="odometer"> 
+                <h4> Total Miles: <!-- Input Mileage here --> </h4>
+                <h4> Recommended Services: </h4>
+            </div>
+          </div class="row">
 
-        </div>
-
-        <!-- Odometer -->
-
-    <div name="odometer"> 
-      <h2> Total Miles: <!-- Input Mileage here --> </h2>
-    </div>
-
-    <div name="history-of-services">
-      <h2> History </h2>
-
-      <h2> Upcoming Services </h2>
-
-        <!-- Shop Information -->
-
-       <h2> Nearby Shops </h2>  
+      <!-- Shop Information -->
+      <div class="row" id="shop-display">
+       <h4> Nearby Shops </h4>  
         <div class="table-responsive">
-          <table class="table table-striped-table-sm">
+          <table class="table table-striped-table-sm__web-inspector-hide-shortcut__">
             <thead>
               <tr>
                 <th>Shop</th>
@@ -76,11 +73,29 @@
                 <td>Type of Services</td>
                 <td>Distance </td>
                 <td> 123-234-3456 </td>
-                <button type="button" class="btn btn-primary">Redirect</button>
+                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
+              </tr>
+              <tr> 
+                <td>Shop Name </td>
+                <td>Category Name</td>
+                <td>Type of Services</td>
+                <td>Distance </td>
+                <td> 123-234-3456 </td>
+                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
+              </tr>
+              <tr> 
+                <td>Shop Name </td>
+                <td>Category Name</td>
+                <td>Type of Services</td>
+                <td>Distance </td>
+                <td> 123-234-3456 </td>
+                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div class="row">
+    </div class="container-fluid">
 
 
 
