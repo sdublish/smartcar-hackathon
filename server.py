@@ -123,13 +123,15 @@ def add_new_car():
 
     response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
 
+    response = json.dumps(response)
+
     vid = response['vehicles'][0]
 
     vehicle = smartcar.Vehicle(vid, auth_key)
 
     vehicle_info = vehicle.info()
 
-    print(type(vehicle_info))
+    vehicle_info = json.dumps(vehicle_info)
 
     vehicle_make = vehicle_info["make"]
     vehicle_model = vehicle_info["model"]
@@ -169,6 +171,8 @@ def render_account_page():
 
     response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
 
+    response = json.dumps(response)
+
     vid = response['vehicles'][0]
 
     vehicle = smartcar.Vehicle(vid, auth_key)
@@ -176,7 +180,6 @@ def render_account_page():
     odometer = vehicle.odometer()
 
     location = vehicle.location()
-
 
     vehicle_info = vehicle.info()
 
