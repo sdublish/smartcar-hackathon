@@ -1,18 +1,18 @@
-Tesla|Roadster|2008
-Tesla|Roadster|2009
-Tesla|Roadster|2010
-Tesla|Roadster|2011
-Tesla|Roadster|2012
-Tesla|Model S|2012
-Tesla|Model S|2013
-Tesla|Model S|2014
-Tesla|Model S|2015
-Tesla|Model S|2016
-Tesla|Model S|2017
-Tesla|Model S|2018
-Tesla|Model X|2015
-Tesla|Model X|2016
-Tesla|Model X|2017
-Tesla|Model X|2018
-Tesla|Model 3|2017
-Tesla|Model 3|2018
+TESLA|Roadster|2008
+TESLA|Roadster|2009
+TESLA|Roadster|2010
+TESLA|Roadster|2011
+TESLA|Roadster|2012
+TESLA|Model S|2012
+TESLA|Model S|2013
+TESLA|Model S|2014
+TESLA|Model S|2015
+TESLA|Model S|2016
+TESLA|Model S|2017
+TESLA|Model S|2018
+TESLA|Model X|2015
+TESLA|Model X|2016
+TESLA|Model X|2017
+TESLA|Model X|2018
+TESLA|Model 3|2017
+TESLA|Model 3|2018
