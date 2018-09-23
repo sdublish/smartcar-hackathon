@@ -63,6 +63,8 @@ class UserVehicle(db.Model):
     nickname = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
+    last_odometer = db.Column(db.Integer)
+    last_location = db.Column(db.Integer)
     #last tire odometer goes here
 
 

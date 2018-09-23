@@ -42,7 +42,7 @@ def get_user_info():
     authorization_key = access_token = r_dict["access_token"]
     #zipcode = requst.form.get
 
-    user = User(f_name=f_name, l_name=l_name, email=email, birthday=birthday,
+    user = User(f_name=f_name, l_name=l_name, email=email, 
                 password=password, create_date=create_date,
                 authorization_key=authorization_key, zipcode=zipcode)
 
