@@ -29,25 +29,30 @@
           <div class="container-fluid">
             <div class="row">
              <div class="col-sm8">
-              <h3> Hi UserName </h3>
-              <img> User's image here </img>
+              <h3> {{user}} </h3>
             </div>
         
       <!-- Vehicle information -->
         <div class="col-md-9 ml-sm-auto col-lg-10 px-4" id="vehicle-info">
             <h4 class="header"> Your Vehicle </h4>
-                <p class="vehicle.make" name="vehicle_make"> Make </p>
-                <p class="vehicle.model" name="vehicle_model"> Model </p>
-                <p class="vehicle.year" name="vehicle_year"> Year </p>
-               <img src="image.car"> Img </img>
+                <p class="vehicle.make" name="vehicle_make"> {{make}} </p>
+                <p class="vehicle.model" name="vehicle_model"> {{model}} </p>
+                <p class="vehicle.year" name="vehicle_year"> {{year}} </p>
             </div>
           </div class="row>">
 
         <!-- Odometer -->  
           <div class="row">
             <div name="odometer"> 
-                <h4> Total Miles: <!-- Input Mileage here --> </h4>
-                <h4> Recommended Services: </h4>
+                <h4> Total Miles:{{odometer}}</h4>
+                <h4> Recommended Services</h4>
+                <ul> {% for service in services %}
+                  <li>
+                    {{service.service_name}} at {{service.suggested_mileage}}
+                  </li>
+                  {% endfor %}
+
+                </ul>
             </div>
           </div class="row">
 
