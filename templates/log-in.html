@@ -18,12 +18,12 @@
 
    <!-- Sign Up // landing page -->
     <h3> Log-in </h3>
-    <form>  
+    <form method="POST" action="/login">  
         <div class="form-group">
           <label for="user_email">Email</label>
-          <input type="email" class="form-control" id="user.email" placeholder="name@email.com">
+          <input type="email" class="form-control" id="user_email" name="user_email" placeholder="name@email.com">
           <label for="user_password">Password</label>
-          <input type="email" class="form-control" id="user.password" placeholder="Enter Password">
+          <input type="password" class="form-control" id="user_password" name="user_password" placeholder="Enter Password">
         </div>
         <button type="button" class="sign-in">Sign In</button>
     </form>
