@@ -27,22 +27,19 @@ app.secret_key = os.environ["FLASK_SECRET_KEY"]
 def render_registration_form():
     """render registration form"""
 
-    return render_template("home.html")
+    return render_template("register.html")
 
 
 @app.route("/registration", methods=["POST"])
 def get_user_info():
     """get user info and add info to db"""
-    # f_name = request.form.get
-    # l_name = request.form.get
-    # email = request.form.get
-    # birthday = request.form.get
-    # password = request.form.get
+    f_name = request.form.get("fname")
+    l_name = request.form.get("lname")
+    email = request.form.get("email")
+    password = request.form.get("password")
     create_date = datetime.datetime.utcnow()
-    # authorization_key =
-    # zipcode = requst.form.get
 
-    user = User(f_name=f_name, l_name=l_name, email=email, 
+    user = User(fname=f_name, lname=l_name, email=email, 
                 password=password, create_date=create_date,
                 authorization_key=authorization_key, zipcode=zipcode)
 
