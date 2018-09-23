@@ -33,13 +33,13 @@ def render_registration_form():
 @app.route("/registration", methods=["POST"])
 def get_user_info():
     """get user info and add info to db"""
-    f_name = request.form.get('fname')
-    l_name = request.form.get('lname')
-    email = request.form.get('email')
-    password = request.form.get('password')
+
+    f_name = request.form.get("fname")
+    l_name = request.form.get("lname")
+    email = request.form.get("email")
+    password = request.form.get("password")
+
     create_date = datetime.datetime.utcnow()
-    # authorization_key =
-    # zipcode = requst.form.get
 
     user = User(fname=f_name, lname=l_name, email=email, 
                 password=password, create_date=create_date)
