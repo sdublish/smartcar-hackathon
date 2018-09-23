@@ -82,7 +82,7 @@ def load_services(services_filename):
                 new_service = Service(model_id=k, service_name=service_name, suggested_mileage=suggested_mileage)
                 db.session.add(new_service)
 
-                print k
+                print(k)
 
 
 
