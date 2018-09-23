@@ -64,38 +64,22 @@
             <thead>
               <tr>
                 <th>Shop</th>
-                <th>Category</th> <!-- Yelp Category -->
-                <th>Services</th> <!-- Services -->
                 <th>Distance </th> <!-- Distance -->
                 <th>Phone number </th> <!-- Phone number -->
                 <th> Contact </th>
               </tr>
             </thead>
             <tbody>
+
+              {% for business in businesses %}
               <tr> 
-                <td>Shop Name </td>
-                <td>Category Name</td>
-                <td>Type of Services</td>
-                <td>Distance </td>
-                <td> 123-234-3456 </td>
-                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
+                <td> {{business.name }} </td>
+                
+                <td> {{business.distance}} </td>
+                <td> {{business.phone}}</td>
+                <td> <a href="{{business.url}}"><button type="button" class="btn btn-primary" name="redirect">Visit page</button></a> </td>
               </tr>
-              <tr> 
-                <td>Shop Name </td>
-                <td>Category Name</td>
-                <td>Type of Services</td>
-                <td>Distance </td>
-                <td> 123-234-3456 </td>
-                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
-              </tr>
-              <tr> 
-                <td>Shop Name </td>
-                <td>Category Name</td>
-                <td>Type of Services</td>
-                <td>Distance </td>
-                <td> 123-234-3456 </td>
-                <td> <button type="button" class="btn btn-primary" name="redirect">Visit page</button> </td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>

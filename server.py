@@ -6,7 +6,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 import smartcar
 import datetime
-from model import User, Vehicle, UserVehicle, connect_to_db, db
+from model import User, Vehicle, UserVehicle, connect_to_db, db, Service
 
 
 client = smartcar.AuthClient(
@@ -78,22 +78,17 @@ def user_login():
         session["user_id"] = query.user_id
 
         user_id = User.query.get(session["user_id"]).user_id
-        print("user_id")
 
         user = User.query.filter(User.user_id == user_id).first()
-        print(user)
 
         cars = user.uservehicles
-        print(cars)
 
         if not cars:
             return redirect("/add_car")
 
         authorization_key = user.authorization_key
-        # what is being stored as the authorization key? Currently not storing
-        # refresh token; can't store a dict in SQL (unless its json, i guess)
 
-        refresh_token = authorization_key["refresh_token"]
+        refresh_token = user.refresh_key
 
         r = client.exchange_refresh_token(refresh_token)
 
@@ -102,7 +97,8 @@ def user_login():
         new_auth_key = r_dict["access_token"]
 
         user.authorization_key = new_auth_key
-        # also need to update refresh token here... again, unclear where that is being stored
+
+        user.refresh_key= r["refresh_token"]
 
         db.session.commit()
 
@@ -116,40 +112,40 @@ def user_login():
 @app.route("/add_car", methods=["GET"])
 def add_new_car():
 
-    auth_url = client.get_auth_url(force=True)
+    # auth_url = client.get_auth_url(force=True)
 
-    user_id = User.query.get(session["user_id"])
+    # user_id = User.query.get(session["user_id"]).user_id
 
-    user = User.query.filter(User.user_id == user_id).first()
+    # user = User.query.filter(User.user_id == user_id).first()
 
-    auth_key = user.authorization_key["access_token"]
+    # auth_key = user.authorization_key["access_token"]
 
-    response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
+    # response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
 
-    response = json.dumps(response)
+    # response = json.dumps(response)
 
-    vid = response['vehicles'][0]
+    # vid = response['vehicles'][0]
 
-    vehicle = smartcar.Vehicle(vid, auth_key)
+    # vehicle = smartcar.Vehicle(vid, auth_key)
 
-    vehicle_info = vehicle.info()
+    # vehicle_info = vehicle.info()
 
-    vehicle_info = json.dumps(vehicle_info)
+    # vehicle_info = json.dumps(vehicle_info)
 
-    vehicle_make = vehicle_info["make"]
-    vehicle_model = vehicle_info["model"]
-    vehicle_year = vehicle_info["year"]
+    # vehicle_make = vehicle_info["make"]
+    # vehicle_model = vehicle_info["model"]
+    # vehicle_year = vehicle_info["year"]
 
-    car = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
-                                Vehicle.vehicle_model_name == vehicle_model
-                                and Vehicle.vehicle_year == vehicle_year).one()
+    # car = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
+    #                             Vehicle.vehicle_model_name == vehicle_model
+    #                             and Vehicle.vehicle_year == vehicle_year).one()
 
-    user_car = UserVehicle(user_id, car.model_id)
+    # user_car = UserVehicle(user_id, car.model_id)
 
-    db.session.add(user_car)
-    db.session.commit()
+    # db.session.add(user_car)
+    # db.session.commit()
 
-    return("/home")
+    return render_template("home.html")
 
 
 @app.route('/home', methods=["GET"])
@@ -166,15 +162,13 @@ def render_account_page():
 
     # use absolute milage when calculating services needed
 
-    user_id = User.query.get(session["user_id"])
+    user_id = User.query.get(session["user_id"]).user_id
 
     user = User.query.filter(User.user_id == user_id).first()
 
-    auth_key = user.authorization_key["access_token"]
+    auth_key = user.authorization_key
 
-    response = client.get_vehicle_ids(auth_key, offset=0, limit=20)
-
-    response = json.dumps(response)
+    response = smartcar.get_vehicle_ids(auth_key, offset=0, limit=20)
 
     vid = response['vehicles'][0]
 
@@ -188,22 +182,48 @@ def render_account_page():
     vehicle_info = vehicle.info()
 
     vehicle_make = vehicle_info["make"]
+
     vehicle_model = vehicle_info["model"]
+
     vehicle_year = vehicle_info["year"]
 
     car = Vehicle.query.filter(Vehicle.vehicle_make == vehicle_make and
                                Vehicle.vehicle_model_name == vehicle_model
-                               and Vehicle.vehicle_year == vehicle_year).one()
+                               and Vehicle.vehicle_year == vehicle_year).first()
 
+    query = UserVehicle.query.filter(UserVehicle.model_id == vid)
 
-    user_car = UserVehicle(user_id, car.model_id, odometer["distance"], location["latitude"],
-                            location["latitude"])
+    if not query:
 
+        user_car = UserVehicle(uservehicle_id=vid, user_id=user_id, model_id=car.model_id, last_odometer=odometer["data"]["distance"], last_longitude=location["data"]["longitude"],
+                               last_latitude=location["data"]["latitude"])
 
-    db.session.add(user_car)
-    db.session.commit()
+        db.session.add(user_car)
+        db.session.commit()
 
-    return render_template("home.html")
+    upcoming_services = Service.query.filter_by(model_id =car.model_id).all()
+
+    recommend_services = []
+
+    for service in upcoming_services:
+        if int(odometer["data"]["distance"]) <= service.suggested_mileage:
+            recommend_services.append(service)
+
+    # querying yelp api below
+    yelp_url = "https://api.yelp.com/v3/businesses/search"
+    header = {"Authorization": "Bearer {}".format(YELP_API_KEY)}
+    # probably want to make categories something which varies depending on what service is required
+    # will need to do something to set that up
+    categories = "autorepair"
+    payload = {"latitude": location["data"]["latitude"], "longitude": location["data"]["longitude"],
+               "radius": 20000, "sort_by": "distance", "categories": categories}
+
+    response = requests.get(yelp_url, headers=header, params=payload)
+    # check here if response goes through fine?
+    businesses = response.json()["businesses"][:10]
+
+    return render_template("dashboard.html", services=recommend_services, user=user.fname, make=vehicle_make,
+                            model=vehicle_model, year=vehicle_year, odometer=odometer["data"]["distance"], businesses=businesses)
 
 
 @app.route('/my_account/vehicle', methods=["GET"])
@@ -216,7 +236,7 @@ def get_authorization_status():
     r_dict = json.dumps(data)
 
     if data.get("error") is not None:
-        return render_template("error_page.hteml")
+        return render_template("error-message.html")
 
     code = request.args.get('code')
 
@@ -224,7 +244,9 @@ def get_authorization_status():
 
     user = User.query.get(session["user_id"])
 
-    user.authorization_key = code
+    user.authorization_key = access["access_token"]
+
+    user.refresh_key = access["refresh_token"]
 
     db.session.commit()
 
