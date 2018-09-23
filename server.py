@@ -10,7 +10,7 @@ import smartcar
 client = smartcar.AuthClient(
     client_id=os.environ["CLIENT_ID"],
     client_secret=os.environ["CLIENT_SECRET"],
-    redirect_uri='http://localhost:8000/my_account/vehicle',
+    redirect_uri='http://localhost:5000/my_account/vehicle',
     scope=['read_vehicle_info', 'read_location', 'read_odometer']
 )
 
@@ -27,7 +27,7 @@ app.secret_key = os.environ["FLASK_SECRET_KEY"]
 def render_registration_form():
     """render registration form"""
 
-    return render_template("registration.html")
+    return render_template("home.html")
 
 
 @app.route("/registration", methods=["POST"])
@@ -164,7 +164,7 @@ def get_authorization_status():
 
     code = request.args.get('code')
 
-    access = client.exchange_code(code["access_token"])
+    access = client.exchange_code(code)
 
     user = User.query.get(session["user_id"])
 
