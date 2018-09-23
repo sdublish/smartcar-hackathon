@@ -64,24 +64,30 @@ def load_vehicles(vehicles_filename):
 #     db.session.commit()
 
 
-# def load_services(services_filename):
-#     """Load services."""
+def load_services(services_filename):
+    """Load services."""
 
-#     print("Service")
+    print("Service")
 
-#     for i, row in enumerate(open(students_filename)):
-#         row = row.rstrip()
+    for i, row in enumerate(open(services_filename)):
+        row = row.rstrip()
 
-#         username, password, fname, lname, class_id = row.split("|")
+        service_name, miles = row.split("|")
 
-#         student = Student(username=username, password=password, fname=fname, lname=lname, class_id=class_id, avatar_id=i+1)
+        for j in range(1, 11):
+            suggested_mileage = j * int(miles)
 
-#         db.session.add(student)
+            for k in range(1, 19):
 
-#         if i % 10 == 0:
-#             print i
+                new_service = Service(model_id=k, service_name=service_name, suggested_mileage=suggested_mileage)
+                db.session.add(new_service)
 
-#     db.session.commit()
+                print k
+
+
+
+
+    db.session.commit()
 
 
 
@@ -130,6 +136,7 @@ if __name__ == "__main__":
     db.create_all()
 
     load_vehicles("seed_data/vehicles.txt")
+    load_services("seed_data/services.txt")
 
 
 
