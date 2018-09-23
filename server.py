@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, flash, redirect
+from flask import Flask, render_template, request, session, flash, redirect, jsonify
 import json
 import requests
 from requests.auth import HTTPBasicAuth
@@ -27,24 +27,22 @@ app.secret_key = os.environ["FLASK_SECRET_KEY"]
 def render_registration_form():
     """render registration form"""
 
-    return render_template("home.html")
+    return render_template("register.html")
 
 
 @app.route("/registration", methods=["POST"])
 def get_user_info():
     """get user info and add info to db"""
-    # f_name = request.form.get
-    # l_name = request.form.get
-    # email = request.form.get
-    # birthday = request.form.get
-    # password = request.form.get
+    f_name = request.form.get('fname')
+    l_name = request.form.get('lname')
+    email = request.form.get('email')
+    password = request.form.get('password')
     create_date = datetime.datetime.utcnow()
     # authorization_key =
     # zipcode = requst.form.get
 
-    user = User(f_name=f_name, l_name=l_name, email=email, 
-                password=password, create_date=create_date,
-                authorization_key=authorization_key, zipcode=zipcode)
+    user = User(fname=f_name, lname=l_name, email=email, 
+                password=password, create_date=create_date)
 
     user.set_password(password)
 
@@ -57,7 +55,7 @@ def get_user_info():
 @app.route("/login", methods=["GET"])
 def render_login_form():
     """render template for login form"""
-    return render_template("login_form.html")
+    return render_template("log-in.html")
 
 
 @app.route("/login", methods=["POST"])
@@ -74,6 +72,7 @@ def user_login():
     # if user does not exist, have user register
     if client is None:
         flash("No User Found, Please Register")
+        # add a place for flashed messages in base/templates
         return redirect("/registration")
     # if user exists, then check the password
 
@@ -90,6 +89,8 @@ def user_login():
             return redirect("/add_car")
 
         authorization_key = user.authorization_key
+        # what is being stored as the authorization key? Currently not storing
+        # refresh token; can't store a dict in SQL (unless its json, i guess)
 
         refresh_token = authorization_key["refresh_token"]
 
@@ -100,6 +101,7 @@ def user_login():
         new_auth_key = r_dict["access_token"]
 
         user.authorization_key = new_auth_key
+        # also need to update refresh token here... again, unclear where that is being stored
 
         db.session.commit()
 
@@ -177,6 +179,7 @@ def render_account_page():
 
     vehicle = smartcar.Vehicle(vid, auth_key)
 
+    # probably need to use jsonify on the next three variables
     odometer = vehicle.odometer()
 
     location = vehicle.location()
@@ -245,7 +248,7 @@ def get_service_shops():
     # may need to check if key has expired or not here
     sm_vehicle = smartcar.Vehicle(vehicle.uservehicle_id, user.authorization_key)
 
-    location = sm_vehicle.location()
+    location = jsonify(sm_vehicle.location())
 
     # querying yelp api below
     yelp_url = "https://api.yelp.com/v3/businesses/search"
@@ -258,7 +261,7 @@ def get_service_shops():
 
     response = requests.get(yelp_url, headers=header, params=payload)
     # check here if response goes through fine?
-    return response.text["businesses"]
+    return response.json()["businesses"]
 
 @app.errorhandler(404)
 def page_not_found(error):

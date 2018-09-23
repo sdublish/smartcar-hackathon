@@ -22,21 +22,27 @@
     <!-- Registration -->
 
     <h3> Sign Up </h3>
-    <form>  
+    <form method="POST" action="/registration">  
         <div class="form-group">
-          <label for="exampleFormControlInput1">First Name</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Name">
-          <label for="exampleFormControlInput1">Last Name</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Name">
-          <label for="exampleFormControlInput1">Email</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@email.com">
-          <label for="exampleFormControlInput1">Password</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter Password">
-          <link for="Forget Password">Forgot Password? </link>
+          <label for="fname">First Name</label>
+          <input type="text" class="form-control" id="fname" name='fname' placeholder="First Name">
         </div>
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" class="form-control" id="lname" name='lname' placeholder="Last Name">
+        </div>
+        <div class='form-group'>
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" name='email' placeholder="name@email.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name='password' placeholder="Enter Password">
+        </div>
+          <link for="Forget Password">Forgot Password? </link><br>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
     </form> 
 
-    <button type="button" class="btn btn-primary">Sign Up</button>
 
     <div class="authentication">
       <p> authentication // terms and services </p>
