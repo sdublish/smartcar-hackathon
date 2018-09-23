@@ -67,23 +67,24 @@ def user_login():
 
     # check to see if this user exists in our db
 
-    client = User.query.filter(User.email == email_address).first()
+    query = User.query.filter(User.email == email_address).first()
 
     # if user does not exist, have user register
-    if client is None:
+    if query is None:
         flash("No User Found, Please Register")
         # add a place for flashed messages in base/templates
         return redirect("/registration")
-    # if user exists, then check the password
+    if query.check_password(password):
+        session["user_id"] = query.user_id
 
-    if client.check_password(password):
-        session["user_id"] = client.user_id
-
-        user_id = User.query.get(session["user_id"])
+        user_id = User.query.get(session["user_id"]).user_id
+        print("user_id")
 
         user = User.query.filter(User.user_id == user_id).first()
+        print(user)
 
         cars = user.uservehicles
+        print(cars)
 
         if not cars:
             return redirect("/add_car")
