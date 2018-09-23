@@ -1,0 +1,11 @@
+autoelectric|Auto Electric Services
+autoglass|Auto Glass Services
+autorepair|Auto Repair
+hybridcarrepair|Hybrid Car Repair
+oilchange|Oil Change Stations
+service_stations|Service Stations
+smog_check_stations|Smog Check Stations
+tires|Tires
+transmissionrepair|Transmission Repair
+wheelrimrepair|Wheel & Rim Repair
+windshieldinstallrepair|Windshield Installation & Repair

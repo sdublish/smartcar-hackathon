@@ -63,14 +63,18 @@ class UserVehicle(db.Model):
     nickname = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
+    last_odometer = db.Column(db.Integer)
+    last_longitude = db.Column(db.Integer)
+    last_latitude = db.Column(db.Integer)
     #last tire odometer goes here
 
 
     #Define relationship to user
-    user = db.relationship("User", backref=db.backref("users"), order_by=uservehicle_id)
+    user = db.relationship("User", backref=db.backref("uservehicles"), order_by=uservehicle_id)
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=uservehicle_id)    
+    model = db.relationship("Vehicle", backref=db.backref("uservehicles"), order_by=uservehicle_id)    
+
 
 
 
@@ -80,12 +84,13 @@ class Service(db.Model):
 
     __tablename__ = "services"
 
-    service_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    service_id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True)
     service_name = db.Column(db.String(100))
     model_id = db.Column(db.Integer, db.ForeignKey('vehicles.model_id'))
+    suggested_mileage = db.Column(db.Integer)
 
     #Define relationship to model
-    model = db.relationship("Vehicle", backref=db.backref("vehicles"), order_by=service_id)    
+    model = db.relationship("Vehicle", backref=db.backref("services"), order_by=service_id)    
 
 
 
@@ -101,10 +106,10 @@ class UserVehicleService(db.Model):
     #odometer completed here
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=uservehicleservice_id)
+    service = db.relationship("Service", backref=db.backref("uservehicleservices"), order_by=uservehicleservice_id)
 
     #Define relationship to uservehicle
-    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicles"), order_by=uservehicleservice_id)
+    uservehicle = db.relationship("UserVehicle", backref=db.backref("uservehicleservices"), order_by=uservehicleservice_id)
 
 
 
@@ -128,10 +133,10 @@ class YelpCategoryService(db.Model):
     yelpcategory_id = db.Column(db.String(40), db.ForeignKey('yelpcategories.yelpcategory_id'))
 
     #Define relationship to service
-    service = db.relationship("Service", backref=db.backref("services"), order_by=yelpcategoryservice_id)
+    service = db.relationship("Service", backref=db.backref("yelpcategoryservice"), order_by=yelpcategoryservice_id)
 
     #Define relationship to yelpcategory
-    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategories"), order_by=yelpcategoryservice_id)
+    yelpcategory = db.relationship("YelpCategory", backref=db.backref("yelpcategorieservices"), order_by=yelpcategoryservice_id)
 
 
 

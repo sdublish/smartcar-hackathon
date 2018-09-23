@@ -42,7 +42,7 @@ def get_user_info():
     # authorization_key =
     # zipcode = requst.form.get
 
-    user = User(f_name=f_name, l_name=l_name, email=email, birthday=birthday,
+    user = User(f_name=f_name, l_name=l_name, email=email, 
                 password=password, create_date=create_date,
                 authorization_key=authorization_key, zipcode=zipcode)
 
@@ -188,8 +188,10 @@ def render_account_page():
                                Vehicle.vehicle_model_name == vehicle_model
                                and Vehicle.vehicle_year == vehicle_year).one()
 
+
     user_car = UserVehicle(user_id, car.model_id, odometer["distance"], location["latitude"],
                             location["latitude"])
+
 
     db.session.add(user_car)
     db.session.commit()
@@ -211,7 +213,7 @@ def get_authorization_status():
 
     code = request.args.get('code')
 
-    access = client.exchange_code(code["access_token"])
+    access = client.exchange_code(code)
 
     user = User.query.get(session["user_id"])
 
@@ -278,5 +280,6 @@ def bad_request(error):
 ###############################################################################
 
 if __name__ == '__main__':
-    connet_to_db(app)
+    connect_to_db(app)
     app.run(debug=True, host='0.0.0.0')
+
