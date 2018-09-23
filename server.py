@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 import os
 from flask_sqlalchemy import SQLAlchemy
 import smartcar
+from model import User, Vehicle, UserVehicle, connect_to_db
 
 
 client = smartcar.AuthClient(
@@ -142,7 +143,8 @@ def render_account_page():
                                    and Vehicle.vehicle_year == vehicle_year).one()
 
 
-    
+    car = UserVehicle(user_id=session["user_id"], model_id=vehicle.model_id)
+
 
     db.session.add(car)
     db.session.commit()
@@ -231,4 +233,6 @@ def bad_request(error):
 ###############################################################################
 
 if __name__ == '__main__':
+    connect_to_db(app)
     app.run(debug=True, host='0.0.0.0')
+
